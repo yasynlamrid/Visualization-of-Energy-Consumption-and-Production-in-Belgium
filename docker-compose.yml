@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data_container:/data/db
+  data_consumption:
+    build: ./data_consumption
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+  data_flow:
+    build: ./data_flow
+    ports:
+      - "5001:5000"
+  data_production:
+    build: ./data_production
+    ports:
+      - "5002:5000"
+    depends_on:
+      - mongodb
+  display_data:
+    build: ./display_data
+    ports:
+      - "5003:5000"
+    depends_on:
+      - mongodb
+volumes:
+  mongodb_data_container:

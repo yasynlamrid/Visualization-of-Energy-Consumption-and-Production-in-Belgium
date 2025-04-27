@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bilan d'énergie</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .negative {
+            background-color: #ffcccc; /* rouge clair */
+        }
+        .positive {
+            background-color: #ccffcc; /* vert clair */
+        }
+        #energyChartContainer {
+            width: 100%;
+            max-width: 600px; /* ou la largeur que vous préférez */
+            margin: 30px auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bilan d'energie</h1>
+
+    <!-- Formulaire pour choisir la date -->
+    <form method="post">
+        <label for="date">Choose a date:</label>
+        <input type="date" id="date" name="date" value="{{ selected_date }}">
+        <input type="submit" value="Submit">
+    </form>
+
+    <!-- Affichage des données dans un tableau -->
+    {% if data %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Jour</th>
+                    <th>Heure</th>
+                    <th>Energie total (MW)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in data %}
+                <tr>
+                    <td>{{ entry.date }}</td>
+                    <td>{{ entry.time }}</td>
+                    <td class="{{ 'negative' if entry.calculated_column < 0 else 'positive' }}">
+                        {{ entry.calculated_column }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div id="energyChartContainer">
+            <canvas id="energyChart"></canvas>
+        </div>
+
+        <script>
+            // Préparation des données pour Chart.js
+            const chartData = {
+                timeLabels: {{ data | map(attribute='time') | list | tojson | safe }},
+                flowData: {{ data | map(attribute='physicalflowatborder_total') | list | tojson | safe }},
+                forecastData: {{ data | map(attribute='mostrecentforecast') | list | tojson | safe }},
+                scheduleData: {{ data | map(attribute='dayaheadgenerationschedule_total') | list | tojson | safe }}
+            };
+        </script>
+        <script>
+            // Création du graphique avec les données préparées
+            const ctx = document.getElementById('energyChart').getContext('2d');
+            const energyChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartData.timeLabels,
+                    datasets: [
+                        {
+                            label: 'Energie importée/exportée',
+                            data: chartData.flowData,
+                            borderColor: 'blue',
+                            borderWidth: 1,
+                            fill: false
+                        },
+                        {
+                            label: 'Energie consommée',
+                            data: chartData.forecastData,
+                            borderColor: 'green',
+                            borderWidth: 1,
+                            fill: false
+                        },
+                        {
+                            label: 'Energie produite ',
+                            data: chartData.scheduleData,
+                            borderColor: 'red',
+                            borderWidth: 1,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: false
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index',
+                    },
+                }
+            });
+        </script>
+    {% else %}
+        <p>No data to display. Please select a date.</p>
+    {% endif %}
+</body>
+</html>

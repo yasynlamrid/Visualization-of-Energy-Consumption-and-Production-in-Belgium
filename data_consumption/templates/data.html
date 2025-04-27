@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+
+
+<head>
+    <title>Consommation {{ date }}</title>
+
+        <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Données d'énergie consommée pour {{ date }}</h1>
+    <table>
+        <!-- Créez les entêtes de votre tableau en fonction de vos données -->
+        <tr>
+            <th>Jour</th>
+            <th>Heure</th>
+            <th>Energie consommée (MW)</th>
+        </tr>
+        <!-- Boucle pour afficher les données -->
+        {% for d in data %}
+            <tr>
+                <td>{{ d.date }}</td>
+                <td>{{ d.time }}</td>
+                <td>{{ d.mostrecentforecast }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
