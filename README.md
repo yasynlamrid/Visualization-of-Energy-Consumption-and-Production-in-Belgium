@@ -39,8 +39,8 @@ Germany
 The main goal is to compare energy production with consumption in Belgium and identify when Belgium exports or imports energy. This helps to better understand energy flows and electricity needs at different times.
 
 ## Technologies Used:
-Python: Programming language for data retrieval and processing.
-Flask: Web framework for building backend services.
-Docker: Application deployment in containers for easier management of development and production environments.
-Elia API: Source of energy consumption and production data in Belgium.
+- Python: Programming language for data retrieval and processing.
+- Flask: Web framework for building backend services.
+- Docker: Application deployment in containers for easier management of development and production environments.
+- Elia API: Source of energy consumption and production data in Belgium.
  
